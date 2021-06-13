@@ -2,6 +2,8 @@ const path = require('path');
 
 module.exports = () => {
   return {
+    // For github pages
+    publicPath: process.env.NODE_ENV === 'production' ? '/dist/' : '/',
     lintOnSave: false,
     css: {
       loaderOptions: {
