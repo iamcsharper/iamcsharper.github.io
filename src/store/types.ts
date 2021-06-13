@@ -1,5 +1,35 @@
 import { Peripherals } from "@/shared/peripherals";
 
+export interface Pin {
+  id: number;
+  name: string;
+  analog: string;
+  modes: PinMode[];
+
+  selectedMode: number | null;
+}
+
+export interface PinMode {
+  sign: string;
+  text: string;
+  type: PinModeType;
+}
+
+export enum PinModeType {
+  IO='IO',
+  GND='GND',
+  Input='Input',
+  Output='Output',
+  Power='Power',
+  OSC='OSC'
+}
+
+export const pinModeTypeArray = Object.values(PinModeType) as string[];
+
+// export interface Pinout {
+//   [key: string]: Pin
+// }
+
 export interface ProjectState {
   isLoading: boolean;
   isProjectLoaded: boolean;
@@ -7,20 +37,26 @@ export interface ProjectState {
   counter: number;
   projectName: string;
   selectedPeripheral: Peripherals;
+  errors: Error[];
+  
+  pinout: Pin[];
 }
 
-
 export enum ProjectMutations {
-  SET_PROJECT_NAME='SET_PROJECT_NAME',
-  SET_SELECTED_PERIPHERAL='SET_SELECTED_PERIPHERAL',
-  INCREMENT_VERSION='INCREMENT_VERSION',
-
-  SET_LOADED_STATE='SET_LOAD_STATE',
-  SET_IS_LOADING='SET_IS_LOADING'
+  SET_PROJECT_NAME = 'SET_PROJECT_NAME',
+  SET_SELECTED_PERIPHERAL = 'SET_SELECTED_PERIPHERAL',
+  INCREMENT_VERSION = 'INCREMENT_VERSION',
+  
+  SET_LOADED_STATE = 'SET_LOADED_STATE',
+  SET_IS_LOADING = 'SET_IS_LOADING',
+  
+  ADD_ERROR = 'ADD_ERROR',
+  PUSH_PIN = 'PUSH_PIN',
+  CHANGE_PIN_DATA = 'CHANGE_PIN_DATA',
 }
 
 export enum ProjectActions {
-    LOAD_GITHUB = 'LOAD_GITHUB',
-    SAVE_PROJECT = 'SAVE_PROJECT',
-    LOAD_PROJECT = 'LOAD_PROJECT'
+  LOAD_GITHUB = 'LOAD_GITHUB',
+  SAVE_PROJECT = 'SAVE_PROJECT',
+  LOAD_PROJECT = 'LOAD_PROJECT'
 }

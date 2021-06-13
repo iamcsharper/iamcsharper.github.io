@@ -7,7 +7,9 @@ const state: ProjectState = {
     projectName: 'Project#0',
     selectedPeripheral: Peripherals.GPIO,
     isProjectLoaded: false,
-    isProjectSaved: false
+    isProjectSaved: false,
+    errors: [],
+    pinout: []
 };
 
 export default state;

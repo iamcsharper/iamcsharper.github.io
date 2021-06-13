@@ -6,4 +6,6 @@ abstract class StrongVueClass extends Vue {
 }
 const StrongVue = Vue as VueConstructor<StrongVueClass>;
 
+export { StrongVueClass };
+
 export default StrongVue;

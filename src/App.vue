@@ -1,5 +1,14 @@
 <template>
   <div id="app">
+    <div v-if="errors.length">
+      <h4>Упс, произошли ошибки. Пожалуйста, свяжитесь с разработчиком</h4>
+      <div class="errors">
+        <pre
+        :data-caption="error.name"
+        v-for="(error,i) in errors"
+        :key="i">{{ typeof error.stack === 'string' ? error.stack.replace(error.name + ': ', '') : '' }}</pre>
+      </div>
+    </div>
     <div v-show="isLoading" style="position: fixed; z-index: 1000; left:0;right:0;top:0;bottom:0; background-color:#000;opacity:0.8;">
       <div style="display: flex;width: 100%; height: 100%;align-items: center;justify-content: center;">
         <img src="@/assets/preloader.svg?data" />
@@ -36,7 +45,7 @@
         <div class="project-loader__container-buttons">
           <button @click="loadFromSketch">Новый</button>
           <button disabled>Из файла</button>
-          <button @click="loadFromLocalStorage">Из localstorage</button>
+          <button @click="loadFromLocalStorage" :disabled="!hasLocalStorage">Из localstorage</button>
         </div>
       </div>
     </div>
@@ -101,13 +110,25 @@ export default class App extends VueStrong {
   }
   
   get isLoading(): boolean {
-    console.log(this.$store.state.isLoading);
     return this.$store.state.isLoading;
+  }
+
+  get errors(): Error[] {
+    return this.$store.state.errors;
+  }
+
+  get hasLocalStorage(): boolean {
+    return window.localStorage.getItem('project') !== null;
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.errors {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
 .chipview__container {
   display: flex;
   width: 100%;

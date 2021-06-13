@@ -9,6 +9,29 @@ html {
     box-sizing: inherit;
 }
 
+pre {
+    margin: 0.2rem;
+    display: block;
+    width: min-content;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    background: #2c3e50;
+    color: #fff;
+    padding: 20px;
+    tab-size: 4;
+    &[data-caption]::before { 
+        content: attr(data-caption);
+        display: block; 
+        background: rgba(0,0,0,0.5);
+        margin-top: -20px;
+        margin-left: -20px;
+        margin-right: -20px;
+        height: 30px;
+        padding: 7px 20px;
+        margin-bottom: 10px;
+    }
+}
+
 .splitter-pane {overflow: hidden;}
 
 ul, ol {padding: 0; margin:0;}

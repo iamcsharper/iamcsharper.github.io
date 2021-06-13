@@ -12,6 +12,7 @@
             :col_id="col_id"
             :pin="myPin"
             :height="pin_height"
+            :rotation="rotation"
             ></pin>
         </div>
     </div>
@@ -29,7 +30,7 @@ import StrongVueClass from '@/vueStrong';
     Pin,
   },
 })
-export default class ChipView extends StrongVueClass {
+export default class PinColumn extends StrongVueClass {
     @Prop() private pins!: IPin[];
     @Prop() private col_id!: number;
 

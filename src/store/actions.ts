@@ -1,7 +1,7 @@
 import axios from 'axios';
 import convert, { Element } from 'xml-js';
 
-import { ProjectState, ProjectActions, ProjectMutations } from './types';
+import { ProjectState, ProjectActions, ProjectMutations, Pin, PinMode, pinModeTypeArray, PinModeType } from './types';
 import { mappingUrl } from '@/config/github.config';
 import { Mutations } from './mutations';
 import { ActionContext } from 'vuex';
@@ -22,11 +22,13 @@ export interface Actions {
     { commit }: AugmentedActionContext): Promise<number>,
   [ProjectActions.SAVE_PROJECT](
     { commit }: AugmentedActionContext, method: saveMethod): Promise<void>,
-  [ProjectActions.LOAD_PROJECT]({commit}: AugmentedActionContext, method: saveMethod): Promise<void>
+  [ProjectActions.LOAD_PROJECT](
+    {commit}: AugmentedActionContext, method: saveMethod): Promise<void>
 }
 
 export const actions = {
-  async [ProjectActions.LOAD_GITHUB]({commit}: AugmentedActionContext): Promise<void> {
+  async [ProjectActions.LOAD_GITHUB](
+    {commit}: AugmentedActionContext): Promise<void> {
     const response = await axios.get(mappingUrl);
         
     const xmlData = convert.xml2js(response.data);
@@ -34,12 +36,94 @@ export const actions = {
     const el = xmlData.elements[1] as Element;
         
     if (!el || !el.elements) {
-        throw new Error('Bad xml data!');
+      commit(ProjectMutations.ADD_ERROR, 
+        new Error('Bad xml data: no root element'));
+      return;
     }
     
     const pinout = (el.elements[0] as Element).elements;
-    
-    console.log(pinout);
+
+    if (!pinout) {
+      commit(ProjectMutations.ADD_ERROR, 
+        new Error('Bad xml data: no pin elements'));
+      return;
+    }
+
+    for (const pinElement of pinout) {
+      const {attributes, elements} = pinElement;
+      if (!attributes || !elements) {
+        commit(ProjectMutations.ADD_ERROR, 
+          new Error(`Bad xml data: pin ${JSON.stringify(pinElement.text)} 
+          has no attrs or elements`));
+        return;
+      }
+      const {id, name} = attributes;
+
+      const analog = typeof attributes.analog === 'string' 
+        ? attributes.analog : '';
+
+      if (typeof id !== 'string' || typeof name !== 'string') {
+        commit(ProjectMutations.ADD_ERROR, 
+          new Error(`Bad xml data: pin ${JSON.stringify(pinElement)} has 
+          at least one wrong attr (id, name) = (${id}, ${name})`));
+        return;
+      }
+
+      if (!pinElement.elements?.length) {
+        commit(ProjectMutations.ADD_ERROR, 
+          new Error(`Bad xml data: pin ${JSON.stringify(pinElement)} 
+          has no mode elements`));
+        return;
+      }
+
+      const modeElements = pinElement.elements;
+
+      const modes: PinMode[] = [];
+
+      for (const modeElement of modeElements) {
+        const modeAttrs = modeElement.attributes;
+        const modeTextElements = modeElement.elements;
+        
+        if (!modeAttrs || !modeTextElements || typeof modeTextElements[0].text !== 'string') {
+          commit(ProjectMutations.ADD_ERROR, new Error(
+            `Bad xml data: pin ${JSON.stringify(pinElement)}
+            mode ${JSON.stringify(modeElement)} has no attrs or text content`));
+          return;
+        }
+
+        const {sign, type} = modeAttrs;
+
+        if (typeof sign !== 'string' || typeof type !== 'string') {
+          commit(ProjectMutations.ADD_ERROR, new Error(
+            `Bad xml data: pin ${JSON.stringify(pinElement)} mode 
+            ${JSON.stringify(modeElement)} has at least one
+            attr null or missing(sign, type)`));
+          return;
+        }
+
+        if (!pinModeTypeArray.includes(type)) {
+          commit(ProjectMutations.ADD_ERROR, new Error(
+            `Bad xml data: pin ${JSON.stringify(pinElement)} mode 
+            ${JSON.stringify(modeElement)} has unknown mode ${type}, 
+            expected any of ${pinModeTypeArray.join(', ')}`));
+          return;
+        }
+
+        modes.push({
+          sign,
+          text: modeTextElements[0].text,
+          type: type as PinModeType
+        })
+      }
+
+      commit(ProjectMutations.PUSH_PIN, {
+        selectedMode: null,
+        id: parseInt(id),
+        name,
+        modes,
+        analog
+      });
+    }
   },
   async [ProjectActions.SAVE_PROJECT](
     {commit, state}: AugmentedActionContext, method: saveMethod): Promise<void> {
@@ -47,10 +131,12 @@ export const actions = {
       commit(ProjectMutations.INCREMENT_VERSION);
       window.localStorage.setItem('project', JSON.stringify(state));
     } else {
-      throw new Error('Unsupported save method');
+      commit(ProjectMutations.ADD_ERROR, new Error('Unsupported save method'));
+      return;
     }
   },
-  async [ProjectActions.LOAD_PROJECT]({commit}: AugmentedActionContext, method: saveMethod): Promise<void> {
+  async [ProjectActions.LOAD_PROJECT](
+    {commit}: AugmentedActionContext, method: saveMethod): Promise<void> {
     if (method === 'none') {
       commit(ProjectMutations.SET_LOADED_STATE, true);
     }
@@ -66,10 +152,12 @@ export const actions = {
         commit(ProjectMutations.SET_LOADED_STATE, true);
         commit(ProjectMutations.SET_IS_LOADING, false);
       } else {
-        throw new Error('Could not load state from localstorage: no key')
+        commit(ProjectMutations.ADD_ERROR, new Error('Could not load state from localstorage: no key'));
+        return;
       }
     } else {
-      throw new Error('Unsupported save method');
+      commit(ProjectMutations.ADD_ERROR, new Error('Unsupported save method'));
+      return;
     }
   }
 }

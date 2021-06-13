@@ -5,6 +5,9 @@
       :pos="dropboxPos"
       :pivot="pivot"
       :is_hidden="dropbox_hidden"
+      :options="dropbox_options"
+      :selected="selected_options"
+      :onOptionSelected="onOptionSelected"
       />
     <div class="zoom_picker__container">
       <aside class="zoom_picker__container-info">
@@ -20,11 +23,11 @@
         transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`
       }">
       <div class="chipview__holder-body" :style="{
-        width: `${packageWidth*2}px`,
-        height: `${packageWidth*2}px`,
-        left: `-${packageWidth}px`,
-        top: `-${packageWidth}px`,
-      }" v-drag="this.onDragged">MIK32</div>
+        width: `${footprint.packageWidth(0)*2}px`,
+        height: `${footprint.packageWidth(1)*2}px`,
+        left: `-${footprint.packageWidth(0)}px`,
+        top: `-${footprint.packageWidth(1)}px`,
+      }" v-drag="this.onDragged">MIK32<br>{{footprint.name}}</div>
       <pin-column
         v-for="(col,i) in cols"
         :key="i"
@@ -33,8 +36,8 @@
         :param_left="col.left"
         :param_top="col.top"
         :rotation="col.rotation"
-        :pin_width="btnWidth"
-        :pin_height="btnHeight"
+        :pin_width="footprint.btnWidth"
+        :pin_height="footprint.btnHeight"
         >
       </pin-column>
       <!-- <pin-column :pins="pins"></pin-column> -->
@@ -45,21 +48,16 @@
 <script lang="ts">
 import XandY from "@/shared/interfaces/XandY"
 import { Component/*, Prop*/, Vue, Ref, Provide } from 'vue-property-decorator';
-import IPin from '@/shared/interfaces/Pin'
 import { DragData } from '@/shared/directives/v-drag';
 
-import Dropbox, {DropboxMode,DropboxPivot} from './Dropbox.vue';
+import Dropbox, {DropboxMode,DropboxOption,DropboxPivot, OptionChangeHandler} from './Dropbox.vue';
 import PinColumn from './PinColumn.vue';
 import { ProjectState, ProjectActions, ProjectMutations } from "@/store/types";
 import VueStrong from '@/vueStrong';
 import { MyMutationPayload } from "@/store";
 
-interface ICol {
-  left: number;
-  top: number;
-  pins: IPin[] | null,
-  rotation: number
-}
+import {dip16, FootprintData, qfp64} from '@/shared/footprints';
+import {ICol, generateCols} from '@/shared/generateCols';
 
 @Component({
   components: {
@@ -70,19 +68,27 @@ interface ICol {
 export default class ChipView extends VueStrong {
   public DropboxMode = DropboxMode;
   public dropboxPos: XandY = {x:-100,y:-100};
-
-  public pivot = DropboxPivot.TopRight;
+  public pivot = DropboxPivot.TopLeft;
   public dropbox_hidden = true;
+  public selected_pin_id = -1;
+  
+  get selected_options(): number[] {
+    if (this.selected_pin_id === -1) return [];
 
-  public cols: ICol[];
+    const selected = this.$store.state.pinout[this.selected_pin_id].selectedMode;
 
-  public readonly perCol = 16;
+    if (selected === null) return [];
 
-  public readonly btnWidth = 80;
-  public readonly btnHeight = 24;
+    return [ selected ];
+  }
+  public dropbox_options:DropboxOption[] = []; 
 
-  public readonly colHeight = this.btnHeight * this.perCol;
-  public readonly packageWidth = this.colHeight / 2;
+  // TODO: load from vuex
+  public footprint: FootprintData = qfp64;
+
+  get cols(): ICol[] {
+    return generateCols(this.footprint);
+  }
 
   @Ref('chipview_container_borders') readonly borders!: HTMLDivElement;
 
@@ -110,10 +116,29 @@ export default class ChipView extends VueStrong {
     this.$store.dispatch(ProjectActions.SAVE_PROJECT, 'localstorage');
   }
 
+  public onOptionSelected(i: number, option: DropboxOption):void {
+    let pin = this.$store.state.pinout[this.selected_pin_id];
+
+    if (pin.selectedMode == option.value) {
+      pin.selectedMode = null;
+    } else {
+      pin.selectedMode = option.value;
+    }
+
+    this.$store.commit(ProjectMutations.CHANGE_PIN_DATA, pin);
+  }
+
   //todo typed arg
   @Provide('pin_click_handler')
   public pinClickHandler (event: Event, id: number, col: number):void {
-    const btn = event.target as HTMLButtonElement;
+    const pin = this.$store.state.pinout[id];
+    this.selected_pin_id = id;
+
+    let btn = event.target as HTMLButtonElement;
+
+    if (!btn.classList.contains('btn'))
+      btn = btn.parentElement as HTMLButtonElement;
+
     let {left, top, width, height} = btn.getBoundingClientRect();
 
     if (col === 0) {
@@ -129,9 +154,17 @@ export default class ChipView extends VueStrong {
     }
 
     this.dropbox_hidden = false;
-
     this.dropboxPos.x = left;
     this.dropboxPos.y = top;
+    
+    const modes = pin.modes;
+
+    this.dropbox_options = modes.map((e,i)=>{
+      return {
+        text: e.sign,
+        value: i
+      }
+    });
   }
 
   public onClickOutside():void {
@@ -217,51 +250,7 @@ export default class ChipView extends VueStrong {
   constructor() {
     super();
 
-    this.cols = [
-      //левая
-      {
-        left: -this.btnWidth - this.packageWidth,
-        top: -this.packageWidth,
-        pins: null,
-        rotation: 0
-      },
-      //нижняя
-      {
-        left: -this.btnWidth/2,
-        top: this.btnWidth/2,
-        pins: null,
-        rotation: -90
-      },
-      //правая
-      {
-        left: this.packageWidth,
-        top: -this.packageWidth,
-        pins: null,
-        rotation: 0
-      },
-      //верхняя
-      {
-        left: -this.btnWidth/2,
-        top: -this.packageWidth*2-this.btnWidth/2,
-        pins: null,
-        rotation: -90
-      }
-    ]
-
-    for (let j = 0; j < 4; ++j) {
-      let arr: IPin[] = [];
-      for (let i = 0; i < this.perCol; ++i) {
-        const id = ((j < 2) ? i : (this.perCol - 1 - i)) + j * this.perCol;
-        arr.push({
-          id,
-          name: 'Pin' + (id+1),
-          x: 0,
-          y: 0
-        });
-      }
-
-      this.cols[j].pins = arr;
-    }
+    
   }
 }
 </script>

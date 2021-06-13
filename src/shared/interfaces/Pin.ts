@@ -2,6 +2,6 @@ export default interface IPin {
     id: number;
     name: string;
     
-    x: number;
-    y: number;
+    x?: number;
+    y?: number;
 }

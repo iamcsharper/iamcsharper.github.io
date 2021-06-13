@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import VueStrong from './vueStrong';
+import VueStrong, {StrongVueClass} from './vueStrong';
 import App from './App.vue';
 import splitPane from 'vue-splitpane';
 
@@ -12,8 +12,15 @@ VueStrong.directive('drag', vDragDirective);
 VueStrong.directive('click-outside', vClickOutside);
 
 import './styles/app.scss';
+import { ProjectMutations } from './store/types';
 
 VueStrong.config.productionTip = false;
+
+VueStrong.config.errorHandler = (
+  err: Error, vm: Vue, info: string): void => {
+  (vm as StrongVueClass).$store.commit(ProjectMutations.ADD_ERROR, err);
+  return;
+}
 
 // use as global component
 VueStrong.component('split-pane', splitPane);
