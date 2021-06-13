@@ -1,5 +1,6 @@
 <template>
   <div class="chipview__pin">
+    <!-- Класс btn необходим для отслеживания четко его левого края а не потомка-->
     <button
     class="btn"
     style="width: 100%"
@@ -7,7 +8,8 @@
       height: `${height}px`,
     }"
     :class="{
-      'active': storePin.selectedMode !== null
+      'active': storePin.selectedMode !== null,
+      'open': pin.is_open
     }"
     :disabled="storePin.modes.length <= 1"
     @click="pin_click_handler($event, pin.id, col_id)">
@@ -52,9 +54,27 @@ export default class ChipView extends VueStrong {
   width: 100%;
   // height: 25px;
   button {
-    padding: 0;
+    cursor: pointer;
+    border: none;
+    padding: .2rem .5rem;
+    margin: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    user-select: none;
+    transition: background-color .1s ease-in-out;
+
+    &:disabled {
+      opacity: 1;
+      cursor: default;
+    }
+
+    &:not(:disabled):hover {
+      background: $gray-second;
+    }
+
     &.active {
-      background: #52b36f;
+      background: $success-color;
+      color: #000;
     }
     
     .badges {

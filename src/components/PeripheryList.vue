@@ -16,19 +16,19 @@
     li {
       display: block;
       padding: 10px 5px;
-      background: rgb(196, 196, 196);
+      background: #dadada;
       color: black;
       margin-bottom: 5px;
       cursor: pointer;
 
       &:hover {
-        background: #dadada;
+        background: #e5e5e5;
       }
 
       &.active {
         padding-left: 15px;
-        border-left: 5px solid rgba(0,0,0,0.5);
-        background: #7952b3;
+        border-left: 5px solid rgba(0,0,0,0.3);
+        background: $active-color;
         color: #fff;
       }
     }

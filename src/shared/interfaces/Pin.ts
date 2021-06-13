@@ -4,4 +4,5 @@ export default interface IPin {
     
     x?: number;
     y?: number;
+    is_open: boolean;
 }

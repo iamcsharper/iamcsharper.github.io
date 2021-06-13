@@ -13,11 +13,11 @@
       <aside class="zoom_picker__container-info">
         <span>{{ projectName }}</span><span>MIK32</span><span>QFP64</span>
         <span v-if="shouldSaySaved">СОХРАНЕНО😊</span>
-        <button @click="saveProject()">Сохранить проект</button>
-        <button>Экспорт</button>
+        <button class="button" @click="saveProject()">Сохранить проект</button>
+        <button class="button">Экспорт</button>
       </aside>
       <input type="range" v-model="zoom" min="0.3" max="1.7" step="0.05">
-      <button @click="resetView">Reset</button>
+      <button class="button button-danger" @click="resetView">Сброс</button>
     </div>
     <div class="chipview__holder" :style="{
         transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`

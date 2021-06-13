@@ -1,4 +1,6 @@
 import { Peripherals } from "@/shared/peripherals";
+import { Module } from "vuex";
+import { modules } from "./state";
 
 export interface Pin {
   id: number;
@@ -26,9 +28,11 @@ export enum PinModeType {
 
 export const pinModeTypeArray = Object.values(PinModeType) as string[];
 
-// export interface Pinout {
-//   [key: string]: Pin
-// }
+type extractGeneric<Type> = Type extends Module<infer X, never> ? X : never
+
+type ModulesType = {
+  [key in keyof typeof modules]: extractGeneric<typeof modules[key]>;
+};
 
 export interface ProjectState {
   isLoading: boolean;
@@ -41,6 +45,8 @@ export interface ProjectState {
   
   pinout: Pin[];
 }
+
+export type AugmentedProjectState = ProjectState & ModulesType;
 
 export enum ProjectMutations {
   SET_PROJECT_NAME = 'SET_PROJECT_NAME',

@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <div v-if="errors.length">
-      <h4>Упс, произошли ошибки. Пожалуйста, свяжитесь с разработчиком</h4>
+    <div v-if="errors.length" style="padding-top:50px">
       <div class="errors">
         <pre
         :data-caption="error.name"
@@ -18,7 +17,7 @@
         <template slot="Периферия">
           <split-pane :min-percent='20' :default-percent='40' split="vertical">
             <template slot="paneL">
-              <split-pane :min-percent='30' :default-percent='60' split="vertical">
+              <split-pane :min-percent='30' :default-percent='30' split="vertical">
                 <template slot="paneL">
                   <PeripheryList />
                 </template>
@@ -43,9 +42,9 @@
       <div class="project-loader__container">
         <h4>Выберите способ загрузки проекта:</h4>
         <div class="project-loader__container-buttons">
-          <button @click="loadFromSketch">Новый</button>
-          <button disabled>Из файла</button>
-          <button @click="loadFromLocalStorage" :disabled="!hasLocalStorage">Из localstorage</button>
+          <button class="button button-lg" @click="loadFromSketch">Новый</button>
+          <button class="button button-lg" disabled>Из файла</button>
+          <button class="button button-lg" @click="loadFromLocalStorage" :disabled="!hasLocalStorage">Из localstorage</button>
         </div>
       </div>
     </div>
@@ -132,7 +131,7 @@ export default class App extends VueStrong {
 .chipview__container {
   display: flex;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   align-items: center;
   justify-content: center;	
   overflow: hidden;
@@ -160,8 +159,15 @@ export default class App extends VueStrong {
       flex-direction: row;
 
       button {
-        height: 35px;
         flex-grow: 1;
+        margin: 0px 5px;
+
+        &:first-of-type {
+          margin-left: 0;
+        }
+        &:last-of-type {
+          margin-right: 0;
+        }
       }
     }
   }

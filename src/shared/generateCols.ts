@@ -49,7 +49,8 @@ export const generateCols = (data: FootprintData): ICol[] => {
                     id,
                     name: 'Pin' + (id+1),
                     x: 0,
-                    y: 0
+                    y: 0,
+                    is_open: false
                 });
             }
             
@@ -83,7 +84,8 @@ export const generateCols = (data: FootprintData): ICol[] => {
                     id,
                     name: 'Pin' + (id+1),
                     x: 0,
-                    y: 0
+                    y: 0,
+                    is_open: false
                 });
             }
             

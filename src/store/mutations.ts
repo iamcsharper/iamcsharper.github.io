@@ -32,6 +32,7 @@ export const mutations: MutationTree<ProjectState> & Mutations = {
         state.isLoading = payload;
     },
     [ProjectMutations.ADD_ERROR](state, payload: Error) {
+        console.error(payload);
         state.errors.push(payload);
         if (state.isLoading) {
             state.isLoading = false;

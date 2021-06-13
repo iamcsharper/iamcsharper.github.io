@@ -1,13 +1,15 @@
 import Vue from 'vue';
 import Vuex, { CommitOptions, DispatchOptions, MutationPayload, Store as VuexStore, StoreOptions } from 'vuex';
-import { ProjectMutations, ProjectState } from '@/store/types'
+import { ProjectState, ProjectMutations } from '@/store/types'
 
-import { gpio } from './gpio/index';
-
-import {Mutations, mutations} from './mutations';
+import {Mutations as RootMutationsType, mutations} from './mutations';
 import {Getters, getters} from './getters';
 import {Actions, actions} from './actions';
-import state from './state';
+import state, {modules} from './state';
+
+import {Mutations as GpioMutationsType} from './gpio/mutations';
+
+type MutationsType = RootMutationsType & GpioMutationsType;
 
 // https://github.com/Ulibka68/vue3-vuex4-typescript
 
@@ -16,18 +18,18 @@ import state from './state';
 Vue.use(Vuex);
 
 export type MyMutationPayload = MutationPayload & {
-  type: keyof Mutations,
+  type: keyof MutationsType,
 };
 
 export type Store = Omit<
   VuexStore<ProjectState>,
   'getters' | 'commit' | 'dispatch'
 > & {
-  commit<K extends keyof Mutations, P extends Parameters<Mutations[K]>[1]>(
+  commit<K extends keyof MutationsType, P extends Parameters<MutationsType[K]>[1]>(
     key: K,
     payload?: P,
     options?: CommitOptions
-  ): ReturnType<Mutations[K]>
+  ): ReturnType<MutationsType[K]>
 } & {
   dispatch<K extends keyof Actions>(
     key: K,
@@ -45,9 +47,7 @@ const storeOptions: StoreOptions<ProjectState> = {
   mutations,
   getters,
   actions,
-  modules: {
-    gpio
-  }
+  modules
 };
 
 const store = new VuexStore<ProjectState>(storeOptions)

@@ -146,11 +146,11 @@ export default class Dropbox extends VueStrong {
     }
 
     &--selected {
-      background: #7952b3;
+      background: $active-color-light;
       color: #fff;
 
       &:hover {
-        background: #674796;
+        background: $active-color;
         color: #fff;
       }
     }

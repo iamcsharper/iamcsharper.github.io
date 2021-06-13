@@ -5,7 +5,7 @@
       v-for='(tab,index) in tabs'
       :key='tab'
       @click='selectTab(index)'
-      :class='{"tab__selected": (index == selectedIndex)}'>
+      :class='{"nav__selected": (index == selectedIndex)}'>
         {{ tab }} 
       </li>
     </ul>
@@ -56,7 +56,7 @@ ul.tabs__header {
   list-style: none;
   padding: 0;
   margin-bottom: 10px;
-  background: #666;
+  border-bottom: 1px solid #868686;
 }
 ul.tabs__header > li {
   height: 48px;
@@ -69,10 +69,12 @@ ul.tabs__header > li {
   font-weight: bold;
   border-bottom: 2px solid transparent;
 
-  &.tab__selected {
+  &.nav__selected {
     color: black;
     background: #ddd;
-    border-bottom: 2px solid #666;
+    border-bottom: 4px solid rgba(0, 0, 0, 0.3);
+    background: $active-color;
+    color: $gray-top;
   }
 }
 .tab {
@@ -87,7 +89,10 @@ ul.tabs__header > li {
   height: 100%;
 }
 .tabs__light li {
-  background-color: #cacaca;
-  color: #aaa;
+  background-color: #eaeaea;
+
+  &:hover {
+    background-color: #e5e5e5;
+  }
 }
 </style>
