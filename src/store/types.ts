@@ -4,6 +4,8 @@ import { modules } from "./state";
 
 export interface Pin {
   id: number;
+  port: number | null;
+  num_in_port: number | null; 
   name: string;
   analog: string;
   modes: PinMode[];
@@ -64,5 +66,5 @@ export enum ProjectMutations {
 export enum ProjectActions {
   LOAD_GITHUB = 'LOAD_GITHUB',
   SAVE_PROJECT = 'SAVE_PROJECT',
-  LOAD_PROJECT = 'LOAD_PROJECT'
+  LOAD_PROJECT = 'LOAD_PROJECT',
 }

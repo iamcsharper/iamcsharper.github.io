@@ -13,13 +13,13 @@
     "reflect-metadata": "^0.1.13",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
+    "vue-multiselect": "^2.1.6",
     "vue-property-decorator": "^9.1.2",
     "vue-splitpane": "^1.0.6",
     "vuex": "^3.6.2",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "normalize-scss": "^7.0.1",
     "@types/axios": "^0.14.0",
     "@types/node": "^15.12.2",
     "@types/vue-splitpane": "^1.0.1",
@@ -39,6 +39,7 @@
     "eslint-plugin-react": "7.21.5",
     "eslint-plugin-react-hooks": "1.7.0",
     "eslint-plugin-vue": "^6.2.2",
+    "normalize-scss": "^7.0.1",
     "prettier": "^2.3.1",
     "sass": "^1.32.6",
     "sass-loader": "^8.0.2",

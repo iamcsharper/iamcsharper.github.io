@@ -30,14 +30,20 @@ export enum Line {
 }
 
 export interface GpioPinConfig {
+    pin: number;
+    num_in_port: number | null;
     name: string;
     direction: Direction;
     intMode: IntMode;
     line: Line;
 }
 
+export interface GpioPinConfigIndexed {
+    data: Partial<GpioPinConfig>;
+    index: number;
+}
+
 export interface GpioState {
-    foo: string;
     configs: GpioPinConfig[];
 }
 

@@ -28,11 +28,10 @@ export type Store = Omit<
 // }
 
 const state: GpioState = {
-    foo: 'bar',
-    configs: []
+  configs: []
 };
 
 export const gpio: Module<GpioState, ProjectState> = {
-    state,
-    mutations
+  state,
+  mutations
 }

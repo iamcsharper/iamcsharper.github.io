@@ -2,7 +2,7 @@ import axios from 'axios';
 import convert, { Element } from 'xml-js';
 
 import { ProjectState, ProjectActions, ProjectMutations, Pin, PinMode, pinModeTypeArray, PinModeType } from './types';
-import { mappingUrl } from '@/config/github.config';
+import { mainUrl, mappingUrl } from '@/config/github.config';
 import { Mutations } from './mutations';
 import { ActionContext } from 'vuex';
 
@@ -30,7 +30,7 @@ export const actions = {
   async [ProjectActions.LOAD_GITHUB](
     {commit}: AugmentedActionContext): Promise<void> {
     const response = await axios.get(mappingUrl);
-        
+
     const xmlData = convert.xml2js(response.data);
         
     const el = xmlData.elements[1] as Element;
@@ -76,8 +76,12 @@ export const actions = {
         return;
       }
 
+      const splitted = name.split('_');
+      const isPort = splitted[0] === 'PORT';
+      const port = isPort ? parseInt(splitted[1]) : null;
+      const num_in_port = isPort ? parseInt(splitted[2]) : null;
+      console.log('num_in_port=', num_in_port);
       const modeElements = pinElement.elements;
-
       const modes: PinMode[] = [];
 
       for (const modeElement of modeElements) {
@@ -119,6 +123,8 @@ export const actions = {
       commit(ProjectMutations.PUSH_PIN, {
         selectedMode: null,
         id: parseInt(id),
+        port,
+        num_in_port,
         name,
         modes,
         analog
@@ -130,7 +136,47 @@ export const actions = {
     if (method === 'localstorage') {
       commit(ProjectMutations.INCREMENT_VERSION);
       window.localStorage.setItem('project', JSON.stringify(state));
-    } else {
+    } 
+    else if (method === 'file') {
+      commit(ProjectMutations.INCREMENT_VERSION);
+
+      const mainContents = await axios.get(mainUrl);
+
+      console.log(mainContents);
+
+      const stateCopy = {
+        ...state,
+      } as Partial<Omit<ProjectState, 'pinout'> & {
+        pinout: Partial<Pin>[]
+      }>;
+
+      delete stateCopy.isLoading;
+      delete stateCopy.errors;
+
+      stateCopy.pinout = stateCopy.pinout?.map(({
+        id,
+        selectedMode,
+      }) => {
+        return {
+          id,
+          selectedMode,
+        }
+      });
+
+      const text = JSON.stringify(stateCopy);
+      const filename = state.projectName.replace(/\s/g, '_') + '.txt';
+      const element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+    }
+    else {
       commit(ProjectMutations.ADD_ERROR, new Error('Unsupported save method'));
       return;
     }

@@ -35,13 +35,9 @@ const vClickDirective: DirectiveOptions = {
             POINTER_EVENTS,
             onPointerEnd
         )
-
-        console.log('v-click-outside registered all mouse handlers');
     },
     unbind: (_: HTMLElement) =>{
         removeEventListeners(document.documentElement, POINTER_EVENTS, onPointerEnd);
-
-        console.log('v-click-outside disposed all mouse handlers');
     }
 };
 

@@ -14,7 +14,7 @@
         <span>{{ projectName }}</span><span>MIK32</span><span>QFP64</span>
         <span v-if="shouldSaySaved">СОХРАНЕНО😊</span>
         <button class="button" @click="saveProject()">Сохранить проект</button>
-        <button class="button">Экспорт</button>
+        <button class="button" @click="generate()">Сгенерировать</button>
       </aside>
       <input type="range" v-model="zoom" min="0.3" max="1.7" step="0.05">
       <button class="button button-danger" @click="resetView">Сброс</button>
@@ -116,6 +116,10 @@ export default class ChipView extends VueStrong {
 
   saveProject(): void {
     this.$store.dispatch(ProjectActions.SAVE_PROJECT, 'localstorage');
+  }
+
+  generate(): void {
+    this.$store.dispatch(ProjectActions.SAVE_PROJECT, 'file');
   }
 
   public onOptionSelected(i: number, option: DropboxOption):void {
