@@ -18,12 +18,12 @@ export interface PinMode {
 }
 
 export enum PinModeType {
-  IO='IO',
-  GND='GND',
-  Input='Input',
-  Output='Output',
-  Power='Power',
-  OSC='OSC'
+  IO = 'IO',
+  GND = 'GND',
+  Input = 'Input',
+  Output = 'Output',
+  Power = 'Power',
+  OSC = 'OSC'
 }
 
 export const pinModeTypeArray = Object.values(PinModeType) as string[];
@@ -42,7 +42,7 @@ export interface ProjectState {
   projectName: string;
   selectedPeripheral: Peripherals;
   errors: Error[];
-  
+
   pinout: Pin[];
 }
 
@@ -52,10 +52,10 @@ export enum ProjectMutations {
   SET_PROJECT_NAME = 'SET_PROJECT_NAME',
   SET_SELECTED_PERIPHERAL = 'SET_SELECTED_PERIPHERAL',
   INCREMENT_VERSION = 'INCREMENT_VERSION',
-  
+
   SET_LOADED_STATE = 'SET_LOADED_STATE',
   SET_IS_LOADING = 'SET_IS_LOADING',
-  
+
   ADD_ERROR = 'ADD_ERROR',
   PUSH_PIN = 'PUSH_PIN',
   CHANGE_PIN_DATA = 'CHANGE_PIN_DATA',

@@ -41,7 +41,9 @@ export interface GpioState {
     configs: GpioPinConfig[];
 }
 
+
 export enum GpioMutations {
     PUSH_CONFIG = 'PUSH_CONFIG',
     CHANGE_CONFIG_DATA = 'CHANGE_CONFIG_DATA',
+    REMOVE_CONFIG = 'REMOVE_CONFIG'
 }

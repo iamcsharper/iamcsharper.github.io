@@ -7,7 +7,7 @@
         <div class="cell">IntMode</div>
         <div class="cell">Line</div>
       </aside>
-      <aside class="row" v-for="config in configs" :key="config.name">
+      <aside class="row" v-for="(config,index) in configs" :key="index">
         <div class="cell" data-title="Name">{{ config.name }}</div>
         <div class="cell" data-title="Direction">{{ config.direction }}</div>
         <div class="cell" data-title="IntMode">{{ config.intMode }}</div>
@@ -32,17 +32,10 @@ export default class GpioProperties extends VueStrong {
     super();
   }
 
-  mounted() {
+  mounted(): void {
     const state = this.$store.state as AugmentedProjectState;
 
     console.log(this.$store, state.gpio);
-
-    this.$store.commit(GpioMutations.PUSH_CONFIG, {
-      name: 'test',
-      direction: Direction.Input,
-      intMode: IntMode.Event_Low,
-      line: Line.Line_5
-    });
 
     // state.gpio.configs.push({
     //   name: 'test_0_2',

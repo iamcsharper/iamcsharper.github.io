@@ -59,6 +59,8 @@ import { MyMutationPayload } from "@/store";
 import {dip16, FootprintData, qfp64} from '@/shared/footprints';
 import {ICol, generateCols} from '@/shared/generateCols';
 
+import {chipviewDropboxHandle} from '@/shared/chipviewDropboxHandle';
+
 @Component({
   components: {
     PinColumn,
@@ -119,13 +121,19 @@ export default class ChipView extends VueStrong {
   public onOptionSelected(i: number, option: DropboxOption):void {
     let pin = this.$store.state.pinout[this.selected_pin_id];
 
+    let isActivated;
+
     if (pin.selectedMode == option.value) {
       pin.selectedMode = null;
+      isActivated = false;
     } else {
       pin.selectedMode = option.value;
+      isActivated = true;
     }
 
     this.$store.commit(ProjectMutations.CHANGE_PIN_DATA, pin);
+
+    chipviewDropboxHandle(this.$store, pin, isActivated);
   }
 
   //todo typed arg
