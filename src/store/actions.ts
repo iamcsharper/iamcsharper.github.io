@@ -1,12 +1,13 @@
 import axios from 'axios';
 import convert, { Element } from 'xml-js';
 
-import { ProjectState, ProjectActions, ProjectMutations, Pin, PinMode, pinModeTypeArray, PinModeType } from './types';
+import { ProjectState, ProjectActions, ProjectMutations, Pin, PinMode, pinModeTypeArray, PinModeType, AugmentedProjectState } from './types';
 import { mainUrl, mappingUrl } from '@/config/github.config';
 import { Mutations } from './mutations';
 import { ActionContext } from 'vuex';
 
 import { resetStoreState } from './index';
+import { CodeGen } from '@/shared/codeGen';
 
 type AugmentedActionContext = {
   commit<K extends keyof Mutations>(
@@ -80,7 +81,6 @@ export const actions = {
       const isPort = splitted[0] === 'PORT';
       const port = isPort ? parseInt(splitted[1]) : null;
       const num_in_port = isPort ? parseInt(splitted[2]) : null;
-      console.log('num_in_port=', num_in_port);
       const modeElements = pinElement.elements;
       const modes: PinMode[] = [];
 
@@ -142,31 +142,13 @@ export const actions = {
 
       const mainContents = await axios.get(mainUrl);
 
-      console.log(mainContents);
+      const codeGen = new CodeGen(mainContents.data, state as AugmentedProjectState);
 
-      const stateCopy = {
-        ...state,
-      } as Partial<Omit<ProjectState, 'pinout'> & {
-        pinout: Partial<Pin>[]
-      }>;
-
-      delete stateCopy.isLoading;
-      delete stateCopy.errors;
-
-      stateCopy.pinout = stateCopy.pinout?.map(({
-        id,
-        selectedMode,
-      }) => {
-        return {
-          id,
-          selectedMode,
-        }
-      });
-
-      const text = JSON.stringify(stateCopy);
-      const filename = state.projectName.replace(/\s/g, '_') + '.txt';
+      codeGen.generate();
+      
+      const filename = 'main.c';
       const element = document.createElement('a');
-      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(codeGen.text));
       element.setAttribute('download', filename);
 
       element.style.display = 'none';
