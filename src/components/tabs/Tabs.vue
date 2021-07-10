@@ -1,21 +1,25 @@
 <template>
   <div class="tabs__light">
-    <ul class='tabs__header' v-if="tabs.length">
+    <ul
+      class='tabs__header'
+      :class="{'tabs__header--fixed': isFixed}"
+      v-if="tabs.length">
       <li
-      v-for='(tab,index) in tabs'
-      :key='tab'
-      @click='selectTab(index)'
-      :class='{"nav__selected": (index == selectedIndex)}'>
+        v-for='(tab,index) in tabs'
+        :key='tab'
+        :class='{"nav__selected": (index === selectedIndex)}'
+        @click='selectTab(index)'
+      >
         {{ tab }} 
       </li>
     </ul>
-    <div 
-    class="tab"
-    v-for="(tabName, index) in tabs"
-    :key="tabName"
-    :ref="`tab-${index}`">
-      <slot :name="tabName"></slot>
-    </div>
+    <transition-group name="fade" mode="out-in" v-if="hasContent">
+      <template v-for="(name, index) in tabs">
+        <div class="tab" :key="name" v-if="index === selectedIndex">
+          <slot :name="name"></slot>
+        </div>
+      </template>
+    </transition-group>
   </div>
 </template>
 <script lang="ts">
@@ -23,40 +27,50 @@ import VueStrong from '@/vueStrong';
 import { Component, Vue, Prop } from 'vue-property-decorator';
 
 @Component({
-  components: {}
+  components: {},
 })
 export default class Tabs extends VueStrong {
   public selectedIndex = 0;
 
   @Prop(Array) tabs!: string[];
+  @Prop(Function) onTabSelected!: (i: number) => void;
+  @Prop({
+    type: Boolean,
+    default: true,
+  }) isFixed!: boolean;
+  @Prop({
+    type: Boolean,
+    default: true,
+  }) hasContent!: boolean;
 
   mounted():void {
     this.selectTab(0)
   }
 
   selectTab (i: number):void {
-    this.selectedIndex = i;
-
-    for (let j = 0; j < this.tabs.length; j++) {
-      const $ref = this.$refs[`tab-${j}`] as HTMLElement[];
-      
-      $ref[0].style.display = (j === i) ? 'block' : 'none';
+    if (this.onTabSelected) {
+      this.onTabSelected(i);
     }
+
+    this.selectedIndex = i;
   }
 }
 </script>
 
 <style lang="scss" scoped>
 ul.tabs__header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   display: flex;
   list-style: none;
   padding: 0;
   margin-bottom: 10px;
   border-bottom: 1px solid #868686;
+
+  &--fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
 }
 ul.tabs__header > li {
   height: 48px;
@@ -78,7 +92,7 @@ ul.tabs__header > li {
   }
 }
 .tab {
-  display: inline-block;
+  display: block;
   color: black;
   min-width: 800px;
   min-height: 400px;

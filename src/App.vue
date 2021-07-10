@@ -17,7 +17,7 @@
         <template slot="Периферия">
           <split-pane :min-percent='20' :default-percent='40' split="vertical">
             <template slot="paneL">
-              <split-pane :min-percent='30' :default-percent='30' split="vertical">
+              <split-pane :min-percent='20' :default-percent='20' split="vertical">
                 <template slot="paneL">
                   <PeripheryList />
                 </template>
@@ -71,7 +71,7 @@ import axios from 'axios';
     PeripheryList,
     PeripheryProperties,
     Tabs,
-    ProjectSettingsView
+    ProjectSettingsView,
   },
 })
 export default class App extends VueStrong {
@@ -97,7 +97,7 @@ export default class App extends VueStrong {
   }
 
   loadFromSketch(): void {
-    this.$store.dispatch(ProjectActions.LOAD_PROJECT, 'none');
+    this.$store.dispatch(ProjectActions.LOAD_PROJECT, 'empty');
   }
 
   loadFromLocalStorage(): void {
@@ -135,7 +135,7 @@ export default class App extends VueStrong {
   align-items: center;
   justify-content: center;	
   overflow: hidden;
-  padding-bottom: 102px;
+  padding-bottom: 65px;
 }
 
 .project-loader {

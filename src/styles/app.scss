@@ -147,7 +147,10 @@ body {
 .row .cell:nth-child(2){width:150px}
 .row .cell:nth-child(3){width:180px}
 .row .cell:nth-child(4){width:190px}
-.table,.row{width:fit-content}
+.table,.row{
+    min-width:fit-content;
+    width: 100%;
+}
 @media(max-width:768px){
     .row{border-bottom:1px solid #f2f2f2;padding-bottom:18px;padding-top:30px;padding-right:15px;margin:0}
     .row .cell{border:none;padding-left:30px;padding-top:16px;padding-bottom:16px}

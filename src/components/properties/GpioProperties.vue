@@ -66,21 +66,6 @@ export default class GpioProperties extends VueStrong {
     super();
   }
 
-  mounted(): void {
-    const state = this.$store.state as AugmentedProjectState;
-
-    console.log(this.$store, state.gpio);
-
-    // state.gpio.configs.push({
-    //   name: 'test_0_2',
-    //   direction: Direction.Input,
-    //   intMode: IntMode.Int_Rising,
-    //   line: Line.Line_2
-    // });
-
-    // state.gpio.configs = [...state.gpio.configs]; 
-  }
-
   changeConfig(index: number, config: Partial<GpioPinConfig>): void {
     this.$store.commit(GpioMutations.CHANGE_CONFIG_DATA, {
       data: config,
@@ -101,9 +86,7 @@ export default class GpioProperties extends VueStrong {
   }
 
   get configs(): GpioPinConfig[] {
-    const state = this.$store.state as AugmentedProjectState;
-
-    return state.gpio.configs;
+    return this.$store.state.gpio.configs;
   }
 }
 </script>

@@ -14,9 +14,9 @@ type AugmentedActionContext = {
     key: K,
     payload?: Parameters<Mutations[K]>[1]
   ): ReturnType<Mutations[K]>
-} & Omit<ActionContext<ProjectState, ProjectState>, 'commit'>
+} & Omit<ActionContext<AugmentedProjectState, AugmentedProjectState>, 'commit'>
 
-export type saveMethod = 'file' | 'localstorage' | 'none';
+export type saveMethod = 'file' | 'localstorage' | 'empty';
 
 export interface Actions {
   [ProjectActions.LOAD_GITHUB](
@@ -142,7 +142,7 @@ export const actions = {
 
       const mainContents = await axios.get(mainUrl);
 
-      const codeGen = new CodeGen(mainContents.data, state as AugmentedProjectState);
+      const codeGen = new CodeGen(mainContents.data, state);
 
       codeGen.generate();
       
@@ -165,7 +165,7 @@ export const actions = {
   },
   async [ProjectActions.LOAD_PROJECT](
     {commit}: AugmentedActionContext, method: saveMethod): Promise<void> {
-    if (method === 'none') {
+    if (method === 'empty') {
       commit(ProjectMutations.SET_LOADED_STATE, true);
     }
     else if (method === 'localstorage') {

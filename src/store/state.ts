@@ -2,9 +2,11 @@ import { Peripherals } from "@/shared/peripherals";
 import { ProjectState } from "./types";
 
 import { gpio } from './gpio/index';
+import { timer32 } from './timer32/index';
 
 export const modules = {
-  gpio
+  gpio,
+  timer32
 };
 
 const state: ProjectState = {

@@ -1,8 +1,9 @@
 <template>
   <div>
     <h4>Настройки периферии</h4>
-    <gpio v-if="selectedPeripheral === Peripherals.GPIO"/>
-    <timer-32 v-if="selectedPeripheral === Peripherals.TIMER32"/>
+    <transition name="fade" mode="out-in">
+      <component :is="comp"></component>
+    </transition>
   </div>
 </template>
 
@@ -11,7 +12,7 @@
 
 <script lang="ts">
 
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component } from 'vue-property-decorator';
 
 import { Peripherals } from '@/shared/peripherals';
 
@@ -26,10 +27,18 @@ import VueStrong from '@/vueStrong';
   },
 })
 export default class PeripheryList extends VueStrong {
-  public Peripherals = Peripherals;
   
-  get selectedPeripheral(): Peripherals {
-    return this.$store.state.selectedPeripheral;
+  get comp(): typeof VueStrong | null {
+    const p = this.$store.state.selectedPeripheral;
+
+    switch (p) {
+      case Peripherals.GPIO:
+        return Gpio;
+      case Peripherals.TIMER32:
+        return Timer32;
+    }
+
+    return null;
   }
 
   constructor() {

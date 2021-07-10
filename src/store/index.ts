@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex, { CommitOptions, DispatchOptions, MutationPayload, Store as VuexStore, StoreOptions } from 'vuex';
-import { ProjectState, ProjectMutations } from '@/store/types'
+import { ProjectState, ProjectMutations, AugmentedProjectState } from '@/store/types'
 
 import {Mutations as RootMutationsType, mutations} from './mutations';
 import {Getters, getters} from './getters';
@@ -8,8 +8,9 @@ import {Actions, actions} from './actions';
 import state, {modules} from './state';
 
 import {Mutations as GpioMutationsType} from './gpio/mutations';
+import {Mutations as Timer32MutationsType} from './timer32/mutations';
 
-type MutationsType = RootMutationsType & GpioMutationsType;
+type MutationsType = RootMutationsType & GpioMutationsType & Timer32MutationsType;
 
 // https://github.com/Ulibka68/vue3-vuex4-typescript
 
@@ -22,7 +23,7 @@ export type MyMutationPayload = MutationPayload & {
 };
 
 export type Store = Omit<
-  VuexStore<ProjectState>,
+  VuexStore<AugmentedProjectState>,
   'getters' | 'commit' | 'dispatch'
 > & {
   commit<K extends keyof MutationsType, P extends Parameters<MutationsType[K]>[1]>(
