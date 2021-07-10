@@ -154,7 +154,7 @@ export const actions = {
       element.style.display = 'none';
       document.body.appendChild(element);
 
-      element.click();
+      //element.click();
 
       document.body.removeChild(element);
     }

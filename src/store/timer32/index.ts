@@ -33,7 +33,7 @@ const defaultTimer:Timer  = {
   countMode: CountMode.Forward,
   clockSource: ClockSource.Prescaler,
   ch1Mode: CHMode.Compare,
-  isConfigured: false,
+  isEnable: false,
 };
 
 const state: Timer32State = {

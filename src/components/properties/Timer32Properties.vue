@@ -7,10 +7,20 @@
       :onTabSelected="onTabSelected"
     />
     <div class="form-control">
+      <label>Enable</label>
+      <input
+        type="checkbox"
+        :checked="timers[selected].isEnable"
+        @input="changeTimer(selected, {isEnable: $event.target.checked})"
+      />
+    </div>
+    <div class="form-control">
       <label>Top</label>
       <input
         type="number"
         step="1"
+        min="0"
+        max="16"
         :value="timers[selected].top"
         @input="changeTimer(selected, {top: $event.target.value})"
       />
@@ -114,7 +124,6 @@ export default class Timer32Properties extends VueStrong {
     this.$store.commit(Timer32Mutations.CHANGE_TIMER_DATA, {
       data: {
         ...data,
-        isConfigured: true,
       },
       index,
     });

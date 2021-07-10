@@ -26,7 +26,7 @@ export interface Timer {
     clockSource: ClockSource,
     ch1Mode: CHMode,
 
-    isConfigured: boolean,
+    isEnable: boolean,
 }
 
 export type TimerIndexed = {
