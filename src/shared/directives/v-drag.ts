@@ -138,15 +138,11 @@ const vDragDirective: DirectiveOptions = {
             POINTER_MOVE_EVENTS,
             onPointerMove
         )
-
-        console.log('v-drag registered all mouse handlers');
     },
     unbind: (el: HTMLElement) =>{
         removeEventListeners(el, POINTER_START_EVENTS, onPointerStart);
         removeEventListeners(document.documentElement, POINTER_END_EVENTS, onPointerEnd);
         removeEventListeners(document.documentElement, POINTER_MOVE_EVENTS, onPointerMove);
-
-        console.log('v-drag disposed all mouse handlers');
     }
 };
 
