@@ -172,7 +172,7 @@ export const actions = {
       commit(ProjectMutations.SET_IS_LOADING, true);
 
       const item = window.localStorage.getItem('project');
-      const loadedState = item ? (JSON.parse(item) as ProjectState) : null;
+      const loadedState = item ? (JSON.parse(item) as AugmentedProjectState) : null;
   
       if (loadedState) {
         resetStoreState(loadedState);

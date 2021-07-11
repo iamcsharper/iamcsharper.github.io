@@ -43,17 +43,17 @@ export type Store = Omit<
   }
 }
 
-const storeOptions: StoreOptions<ProjectState> = {
-  state,
+const storeOptions: StoreOptions<AugmentedProjectState> = {
+  state: state as AugmentedProjectState,
   mutations,
   getters,
   actions,
   modules
 };
 
-const store = new VuexStore<ProjectState>(storeOptions)
+const store = new VuexStore<AugmentedProjectState>(storeOptions)
 
-export function resetStoreState(state: ProjectState):void {
+export function resetStoreState(state: AugmentedProjectState):void {
   store.replaceState(state);
 }
 
