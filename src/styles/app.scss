@@ -2,11 +2,8 @@ html, body {
     height: 100%;
 }
 
-html {
+*, *:after, *:before {
     box-sizing: border-box;
-}
-*, *:before, *:after {
-    box-sizing: inherit;
 }
 
 pre {
@@ -158,3 +155,55 @@ body {
     .row .cell{font-size:18px;color:#555;line-height:1.2;font-weight:unset!important}
     .table,.row,.cell{width:100%!important}
 }
+
+.multiselect {
+    cursor: pointer;
+    &--active {
+        .multiselect__tags, .multiselect__content-wrapper {
+            border: 1px solid darken(#e8e8e8, 20%);
+        }
+        .multiselect__tags {
+            border-width: 2px;
+        }
+    }
+    &--disabled {
+        cursor: not-allowed;
+        pointer-events: auto;
+    }
+    &__option {
+        &--highlight {
+            background: $gray-third;
+        }
+    
+        &--selected {
+            background: $gray-second;
+            color: #fff;
+            &.multiselect__option--highlight {
+                background: darken($gray-second, 15%);
+                color: #fff;
+            }
+        }
+    }
+}
+
+input[type=number] {
+    /*for absolutely positioning spinners*/
+    position: relative; 
+    padding: 5px;
+    padding-right: 25px;
+  }
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    opacity: 1;
+  }
+
+  input[type=number]::-webkit-outer-spin-button, 
+  input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button !important;
+    width: 25px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+  }

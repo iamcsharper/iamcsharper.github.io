@@ -15,7 +15,7 @@
     </div>
     <tabs :tabs="['Периферия', 'Clock', 'Настройки проекта']" v-if="isProjectLoaded">
         <template slot="Периферия">
-          <split-pane :min-percent='20' :default-percent='40' split="vertical">
+          <split-pane :min-percent='20' :default-percent='50' split="vertical">
             <template slot="paneL">
               <split-pane :min-percent='20' :default-percent='20' split="vertical">
                 <template slot="paneL">
@@ -60,7 +60,7 @@ import PeripheryList from './components/PeripheryList.vue'
 import ProjectSettingsView from './components/ProjectSettingsView.vue';
 import PeripheryProperties from './components/properties/PeripheryProperties.vue';
 
-import Tabs from './components/tabs/Tabs.vue';
+import Tabs from './components/standart/Tabs.vue';
 import VueStrong from '@/vueStrong';
 import { ProjectActions, ProjectMutations } from './store/types';
 import axios from 'axios';

@@ -1,6 +1,6 @@
 import Vuex, { CommitOptions, DispatchOptions, Module, MutationPayload, Store as VuexStore, StoreOptions } from 'vuex';
 import { ProjectState } from '../types';
-import { CHMode, ClockSource, CountMode, Timer, Timer32State, timersCount } from './types';
+import { CaptureEdge, CHMode, ClockSource, CountMode, Timer, Timer32State, TimerChannel, TimerIntMode, timersCount } from './types';
 import {Mutations, mutations} from './mutations';
 
 //'getters' | 'commit' | 'dispatch'
@@ -27,12 +27,22 @@ export type Store = Omit<
 //   }
 // }
 
+const defaultChannel:TimerChannel = {
+  mode: CHMode.Disable,
+  noiseFilter: false,
+  compareValue: 1,
+  captureValue: 1,
+  captureEdge: CaptureEdge.Rising,
+  pwmInverted: false,
+}
+
 const defaultTimer:Timer  = {
   top: 1,
   prescaler: 1,
   countMode: CountMode.Forward,
   clockSource: ClockSource.Prescaler,
-  ch1Mode: CHMode.Compare,
+  channels: [...Array(4).keys()].map(() => ({...defaultChannel})),
+  intMode: TimerIntMode.Interrupt,
   isEnable: false,
 };
 

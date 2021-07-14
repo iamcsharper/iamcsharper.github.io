@@ -5,6 +5,11 @@ export enum CountMode {
     Bidirectional = 'Bidirectional',
 }
 
+export enum TimerIntMode {
+    Interrupt = 'Interrupt',
+    Event = 'Event',
+}
+
 export enum ClockSource {
     Prescaler = 'Prescaler',
     TIM1 = 'TIM1',
@@ -13,20 +18,34 @@ export enum ClockSource {
 }
 
 export enum CHMode {
-    Disable,
-    Compare,
-    Capture,
-    PWM,
+    Disable = 'Disable',
+    Compare = 'Compare',
+    Capture = 'Capture',
+    PWM = 'PWM',
+}
+
+export enum CaptureEdge {
+    Rising = 'Rising',
+    Falling = 'Falling',
+}
+
+export interface TimerChannel {
+    mode: CHMode;
+    noiseFilter: boolean;
+    compareValue: number;
+    captureValue: number;
+    captureEdge: CaptureEdge;
+    pwmInverted: boolean;
 }
 
 export interface Timer {
     top: number;
     prescaler: number;
-    countMode: CountMode,
-    clockSource: ClockSource,
-    ch1Mode: CHMode,
-
-    isEnable: boolean,
+    countMode: CountMode;
+    clockSource: ClockSource;
+    channels: TimerChannel[];
+    intMode: TimerIntMode;
+    isEnable: boolean;
 }
 
 export type TimerIndexed = {

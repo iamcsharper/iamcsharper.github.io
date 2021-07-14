@@ -34,6 +34,8 @@
         <div class="cell" data-title="Line">
           <multiselect
             :disabled="config.intMode === IntMode.None"
+            class="line-select"
+            :class="{'line-select--duplicate': isDuplicateLine(index)}"
             :value="config.line"
             :searchable="false"
             :close-on-select="true"
@@ -41,12 +43,32 @@
             placeholder="Pick Line"
             @select="changeConfig(index, {line: $event})"
             :options="(config.num_in_port!==null) ? getLineOptions(config.num_in_port) : []" />
+          <small v-if="isDuplicateLine(index)">
+            Линии не должны повторяться
+          </small>
         </div>
       </aside>
     </main>
   </div>
 </template>
+<style lang="scss">
 
+
+.line-select {
+  transition: all .2s ease-in-out;
+  &--duplicate {
+    color: #fff;
+    font-weight: bold;
+    .multiselect__tags, .multiselect__single {
+      background: $danger-color;   
+    }
+    .multiselect__select:before {
+      color: #fff;
+      border-top-color: #fff;
+    }
+  }
+}
+</style>
 <script lang="ts">
 import Multiselect from 'vue-multiselect';
 import { Direction, GpioMutations, GpioPinConfig, IntMode, Line } from '@/store/gpio/types';
@@ -64,6 +86,19 @@ export default class GpioProperties extends VueStrong {
 
   constructor() {
     super();
+  }
+
+  isDuplicateLine(index: number): boolean {
+    const config = this.configs[index];
+
+    if (config.intMode === IntMode.None) 
+      return false;
+
+    return this.configs.some(e => (
+      e.line === config.line &&
+      e.pin !== config.pin &&
+      e.intMode !== IntMode.None
+    ));
   }
 
   changeConfig(index: number, config: Partial<GpioPinConfig>): void {
