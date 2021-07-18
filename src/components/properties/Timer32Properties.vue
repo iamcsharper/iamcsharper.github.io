@@ -10,11 +10,13 @@
     <div class="form" :class="{'form-animating': isAnimating}">
       <div class="form-control">
         <label>Enabled?</label>
-        <v-checkbox
-          :isDark="true"
-          :checked="timers[selected].isEnable"
-          @input="changeTimer(selected, {isEnable: $event})"
-        />
+        <div>
+          <v-checkbox
+            :isDark="true"
+            :checked="timers[selected].isEnable"
+            @input="changeTimer(selected, {isEnable: $event})"
+          />
+        </div>
       </div>
       <div class="form-control">
         <label>Top</label>
@@ -89,11 +91,13 @@
         <div v-if="ch.mode !== CHMode.Disable" :key="`extras-${i}`">
           <div class="form-control">
             <label>Noise Filter</label>
-            <v-checkbox
-              :isDark="true"
-              :checked="ch.noiseFilter"
-              @input="changeTimerChannel(selected, i, {noiseFilter: $event})"
-            />
+            <div>
+              <v-checkbox
+                :isDark="true"
+                :checked="ch.noiseFilter"
+                @input="changeTimerChannel(selected, i, {noiseFilter: $event})"
+              />
+            </div>
           </div>
           <div class="form-control">
             <label>Compare Value</label>

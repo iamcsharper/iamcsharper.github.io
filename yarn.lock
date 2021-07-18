@@ -1065,6 +1065,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/intro.js@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@types/intro.js/-/intro.js-3.0.2.tgz#cbf9b69f055b77582cc2cebe236e9a405b30efbd"
+  integrity sha512-kow8REgIIG42atN9vAaIdpEqVzj6WzV9m0PII8oce+an4Lc3eyfQF32/FbabbGmfWuF7TceTdd+gh74kOrXkPw==
+
 "@types/json-schema@^7.0.4", "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.7":
   version "7.0.7"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.7.tgz#98a993516c859eb0d5c4c8f098317a9ea68db9ad"
@@ -5155,6 +5160,11 @@ internal-slot@^1.0.3:
     get-intrinsic "^1.1.0"
     has "^1.0.3"
     side-channel "^1.0.4"
+
+intro.js@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/intro.js/-/intro.js-4.1.0.tgz#7e4ae5877df0c452b23d1fd96f2666eb87796b22"
+  integrity sha512-+Y+UsP+yvqqlEOjFExMBXKopn3nzwc91PaUl0SrvqiVs6ztko1DzfkoXR2AnfirZVZZhr5Aej6wlXRlvIkuMcA==
 
 ip-regex@^2.1.0:
   version "2.1.0"

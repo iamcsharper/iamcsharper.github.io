@@ -11,6 +11,8 @@ import vClickOutside from './shared/directives/v-click-outside';
 VueStrong.directive('drag', vDragDirective);
 VueStrong.directive('click-outside', vClickOutside);
 
+import 'intro.js/introjs.css';
+
 import './styles/app.scss';
 import { ProjectMutations } from './store/types';
 

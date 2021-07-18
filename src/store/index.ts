@@ -10,7 +10,11 @@ import state, {modules} from './state';
 import {Mutations as GpioMutationsType} from './gpio/mutations';
 import {Mutations as Timer32MutationsType} from './timer32/mutations';
 
-type MutationsType = RootMutationsType & GpioMutationsType & Timer32MutationsType;
+type MutationsType = 
+  RootMutationsType &
+  GpioMutationsType &
+  Timer32MutationsType
+;
 
 // https://github.com/Ulibka68/vue3-vuex4-typescript
 

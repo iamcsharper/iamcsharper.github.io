@@ -1,5 +1,5 @@
 import Vuex, { CommitOptions, DispatchOptions, Module, MutationPayload, Store as VuexStore, StoreOptions } from 'vuex';
-import { ProjectState } from '../types';
+import { ProjectState, SerializableState } from '../types';
 import { CaptureEdge, CHMode, ClockSource, CountMode, Timer, Timer32State, TimerChannel, TimerIntMode, timersCount } from './types';
 import {Mutations, mutations} from './mutations';
 
@@ -49,6 +49,21 @@ const defaultTimer:Timer  = {
 const state: Timer32State = {
   timers: [...Array(timersCount).keys()].map(()=>({ ...defaultTimer })),
 };
+
+export const timer32Serializers: SerializableState<Timer32State> = {
+  deserialize(str: string) {
+    return {
+      ...state,
+      ...(JSON.parse(str))
+    }
+  },
+  serialize(state: Timer32State) {
+    const clone = { ...state } as Partial<Timer32State>;
+
+    return JSON.stringify(clone);
+  }
+}
+
 
 export const timer32: Module<Timer32State, ProjectState> = {
   state,

@@ -1,13 +1,14 @@
 import axios from 'axios';
 import convert, { Element } from 'xml-js';
 
-import { ProjectState, ProjectActions, ProjectMutations, Pin, PinMode, pinModeTypeArray, PinModeType, AugmentedProjectState } from './types';
-import { mainUrl, mappingUrl } from '@/config/github.config';
+import { ProjectState, ProjectActions, ProjectMutations, Pin, PinMode, pinModeTypeArray, PinModeType, AugmentedProjectState, SerializableState, ModulesType, EncodedModulesType } from './types';
+import { mainUrl, mappingUrl, clockSvg } from '@/config/links';
 import { Mutations } from './mutations';
 import { ActionContext } from 'vuex';
 
 import { resetStoreState } from './index';
 import { CodeGen } from '@/shared/codeGen';
+import { modules, rootSerializers, serializers } from './state';
 
 type AugmentedActionContext = {
   commit<K extends keyof Mutations>(
@@ -21,6 +22,8 @@ export type saveMethod = 'file' | 'localstorage' | 'empty';
 export interface Actions {
   [ProjectActions.LOAD_GITHUB](
     { commit }: AugmentedActionContext): Promise<number>,
+  [ProjectActions.LOAD_CLOCK_SVG](
+    { commit }: AugmentedActionContext): Promise<Blob>,
   [ProjectActions.SAVE_PROJECT](
     { commit }: AugmentedActionContext, method: saveMethod): Promise<void>,
   [ProjectActions.LOAD_PROJECT](
@@ -28,6 +31,18 @@ export interface Actions {
 }
 
 export const actions = {
+  async [ProjectActions.LOAD_CLOCK_SVG](
+    { commit }: AugmentedActionContext): Promise<void> {
+    const { data } = await axios.get(clockSvg);
+
+    const svg = btoa(
+      unescape(
+        encodeURIComponent(data)
+      )
+    );
+
+    commit(ProjectMutations.SET_CLOCK_SVG, svg);
+  },
   async [ProjectActions.LOAD_GITHUB](
     {commit}: AugmentedActionContext): Promise<void> {
     const response = await axios.get(mappingUrl);
@@ -135,7 +150,26 @@ export const actions = {
     {commit, state}: AugmentedActionContext, method: saveMethod): Promise<void> {
     if (method === 'localstorage') {
       commit(ProjectMutations.INCREMENT_VERSION);
-      window.localStorage.setItem('project', JSON.stringify(state));
+
+      const rootState: (ProjectState & Partial<ModulesType>) = {
+        ...state
+      };
+
+      for (const module in modules) {
+        delete (rootState as Record<string, any>)[module];
+      }
+
+      const serObj: Record<string, any> = {
+        root: rootSerializers.serialize(rootState),
+      };
+
+      for (const [k, v] of Object.entries(serializers)) {
+        serObj[k] = (v as SerializableState<any>).serialize(
+          (state as Record<string,any>)[k]
+        );
+      }
+
+      window.localStorage.setItem('project', JSON.stringify(serObj));
     } 
     else if (method === 'file') {
       commit(ProjectMutations.INCREMENT_VERSION);
@@ -160,7 +194,6 @@ export const actions = {
     }
     else {
       commit(ProjectMutations.ADD_ERROR, new Error('Unsupported save method'));
-      return;
     }
   },
   async [ProjectActions.LOAD_PROJECT](
@@ -172,16 +205,32 @@ export const actions = {
       commit(ProjectMutations.SET_IS_LOADING, true);
 
       const item = window.localStorage.getItem('project');
-      const loadedState = item ? (JSON.parse(item) as AugmentedProjectState) : null;
+      let loadedState: Record<string, any> | null = null;
+
+      if (item) {
+        const decoded = JSON.parse(item) as (EncodedModulesType & {
+          root: string
+        });
+
+        loadedState = {
+          ...(rootSerializers.deserialize(decoded.root)),
+        };
+  
+        for (const [k, v] of Object.entries(serializers)) {
+          loadedState[k] = (v as SerializableState<any>).deserialize(
+            (decoded as Record<string,any>)[k]
+          );
+        }
+      }
+      // const loadedState = item ? (JSON.parse(item) as AugmentedProjectState) : null;
   
       if (loadedState) {
-        resetStoreState(loadedState);
+        resetStoreState(loadedState as AugmentedProjectState);
 
         commit(ProjectMutations.SET_LOADED_STATE, true);
         commit(ProjectMutations.SET_IS_LOADING, false);
       } else {
         commit(ProjectMutations.ADD_ERROR, new Error('Could not load state from localstorage: no key'));
-        return;
       }
     } else {
       commit(ProjectMutations.ADD_ERROR, new Error('Unsupported save method'));

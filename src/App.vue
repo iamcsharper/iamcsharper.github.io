@@ -15,7 +15,7 @@
     </div>
     <tabs :tabs="['Периферия', 'Clock', 'Настройки проекта']" v-if="isProjectLoaded">
         <template slot="Периферия">
-          <split-pane :min-percent='20' :default-percent='50' split="vertical">
+          <split-pane :min-percent='20' :default-percent='48' split="vertical">
             <template slot="paneL">
               <split-pane :min-percent='20' :default-percent='20' split="vertical">
                 <template slot="paneL">
@@ -33,20 +33,23 @@
             </template>
           </split-pane>
         </template>
-        <template slot="Clock">WIP</template>
+        <template slot="Clock">
+          <ClockView/>
+        </template>
         <template slot="Настройки проекта">
           <ProjectSettingsView />
         </template>
     </tabs>
     <div class="project-loader" v-else>
       <div class="project-loader__container">
-        <h4>Выберите способ загрузки проекта:</h4>
+        <h4 id="step-init">Выберите способ загрузки проекта:</h4>
         <div class="project-loader__container-buttons">
-          <button class="button button-lg" @click="loadFromSketch">Новый</button>
-          <button class="button button-lg" disabled>Из файла</button>
-          <button class="button button-lg" @click="loadFromLocalStorage" :disabled="!hasLocalStorage">Из localstorage</button>
+          <button class="button button-lg" @click="loadFromSketch" id="step-new">Новый</button>
+          <button class="button button-lg" disabled id="step-file">Из файла</button>
+          <button class="button button-lg" @click="loadFromLocalStorage" :disabled="!hasLocalStorage" id="step-local">Из localstorage</button>
         </div>
       </div>
+      <v-tour name="welcomeTour" :steps="welcomeTourSteps"></v-tour>
     </div>
     <!-- <LoadProjectView/> -->
   </div>
@@ -59,14 +62,19 @@ import ChipView from './components/Chipview.vue';
 import PeripheryList from './components/PeripheryList.vue'
 import ProjectSettingsView from './components/ProjectSettingsView.vue';
 import PeripheryProperties from './components/properties/PeripheryProperties.vue';
+import ClockView from './components/Clockview.vue';
 
 import Tabs from './components/standart/Tabs.vue';
 import VueStrong from '@/vueStrong';
 import { ProjectActions, ProjectMutations } from './store/types';
 import axios from 'axios';
 
+import introJs, { Step } from 'intro.js';
+import { createIntro } from './shared/helpers';
+
 @Component({
   components: {
+    ClockView,
     ChipView,
     PeripheryList,
     PeripheryProperties,
@@ -75,6 +83,29 @@ import axios from 'axios';
   },
 })
 export default class App extends VueStrong {
+  welcomeTourSteps: Step[] = [
+    {
+      element: '#step-init',
+      title: 'Добро пожаловать',
+      intro: `Откройте возможности конфигуратора MIK32 прямо сейчас!`
+    },
+    {
+      element: '#step-new',
+      title: 'Новый',
+      intro: `Создать пустой проект (внимание - при сохранении в LocalStorage вы удалите старый)`
+    },
+    {
+      element: '#step-file',
+      title: 'Файл',
+      intro: `Опция пока недоступна, в дальнейшем планируется запись и чтение проекта настроек из файла`
+    },
+    {
+      element: '#step-local',
+      title: 'Из локального хранилища',
+      intro: `Загрузить проект из LocalStorage (не очищайте куки и прочие файлы браузера чтобы не потерять данные)`
+    },
+  ];
+
   mounted():void {
     axios.interceptors.request.use((config) => {
       // spinning start to show
@@ -94,6 +125,14 @@ export default class App extends VueStrong {
     });
 
     this.$store.dispatch(ProjectActions.LOAD_GITHUB);
+
+    if (window.localStorage.getItem('uzhe_smesharik') !== '1') {
+      createIntro().setOptions({
+        steps: this.welcomeTourSteps,
+      }).start().oncomplete(()=>{
+        window.localStorage.setItem('uzhe_smesharik', '1');
+      });
+    }
   }
 
   loadFromSketch(): void {

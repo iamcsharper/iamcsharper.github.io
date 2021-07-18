@@ -13,6 +13,7 @@ export type Mutations<S = ProjectState> = {
     [ProjectMutations.ADD_ERROR](state: S, payload: Error): void;
     [ProjectMutations.PUSH_PIN](state: S, payload: Pin): void;
     [ProjectMutations.CHANGE_PIN_DATA](state:S, payload: Pin): void;
+    [ProjectMutations.SET_CLOCK_SVG](state:S, payload: string): void;
 };
 
 export const mutations: MutationTree<ProjectState> & Mutations = {
@@ -51,5 +52,11 @@ export const mutations: MutationTree<ProjectState> & Mutations = {
 
             state.pinout = [...state.pinout];
         }
+    },
+    [ProjectMutations.SET_CLOCK_SVG](state, payload: string) {
+        state.clockSvg = null;
+        state.clockSvg = '' + payload;
+
+        console.log('updated svg');
     }
 }

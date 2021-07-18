@@ -27,7 +27,7 @@
         height: `${footprint.packageWidth(1)*2}px`,
         left: `-${footprint.packageWidth(0)}px`,
         top: `-${footprint.packageWidth(1)}px`,
-      }" v-drag="this.onDragged">MIK32<br>{{footprint.name}}</div>
+      }" v-drag="onDragged">MIK32<br>{{footprint.name}}</div>
       <pin-column
         v-for="(col,i) in cols"
         :key="i"
@@ -60,6 +60,7 @@ import {dip16, FootprintData, qfp64} from '@/shared/footprints';
 import {ICol, generateCols} from '@/shared/generateCols';
 
 import {chipviewDropboxHandle} from '@/shared/chipviewDropboxHandle';
+import { constrain } from "@/shared/helpers";
 
 @Component({
   components: {
@@ -218,13 +219,7 @@ export default class ChipView extends VueStrong {
 
     this.zoom -= evt.deltaY/125 * 0.05;
 
-    if (this.zoom > 1.7) {
-      this.zoom = 1.7;
-    }
-
-    if (this.zoom < 0.3) {
-      this.zoom = 0.3;
-    }
+    this.zoom = constrain(0.5, 1.7, this.zoom);
 
     this.dropbox_hidden = true;
   }

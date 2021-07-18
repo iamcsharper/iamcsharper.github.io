@@ -18,7 +18,6 @@ chipviewDropboxHandle({ state, commit }: Store, pin: Pin, isActivated: boolean):
     }
 
     if (!isGpio && foundExisting) {
-        console.log('removing');
         commit(GpioMutations.REMOVE_CONFIG, foundExisting.name);
     }
 

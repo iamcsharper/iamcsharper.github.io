@@ -1,5 +1,5 @@
 import Vuex, { CommitOptions, DispatchOptions, Module, MutationPayload, Store as VuexStore, StoreOptions } from 'vuex';
-import { ProjectState } from '../types';
+import { ProjectState, SerializableState } from '../types';
 import { GpioState } from './types';
 import {Mutations, mutations} from './mutations';
 
@@ -30,6 +30,20 @@ export type Store = Omit<
 const state: GpioState = {
   configs: []
 };
+
+export const gpioSerializers: SerializableState<GpioState> = {
+  deserialize(str: string) {
+    return {
+      ...state,
+      ...(JSON.parse(str))
+    }
+  },
+  serialize(state: GpioState) {
+    const clone = { ...state } as Partial<GpioState>;
+
+    return JSON.stringify(clone);
+  }
+}
 
 export const gpio: Module<GpioState, ProjectState> = {
   state,

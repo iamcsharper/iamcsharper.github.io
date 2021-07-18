@@ -45,9 +45,14 @@ export default class VCheckbox extends VueStrong {
 <style lang="scss">
 .v-checkbox {
     display: inline-block;
+    width: fit-content;
     position: relative;
     cursor: pointer;
     user-select: none;
+
+    &-block {
+        width: 100%;
+    }
 
     &:active {
         transform: scale(1.05);
