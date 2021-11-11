@@ -1,4 +1,6 @@
-# configurator
+# MIK32 configurator
+
+Demo: [link](https://iamcsharper.github.io/dist/)
 
 ## Project setup
 ```
