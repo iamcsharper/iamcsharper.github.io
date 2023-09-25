@@ -3,27 +3,3 @@
 [!] This project is no longer maintaned.
 Please look at https://github.com/MikronMIK32/web-configurator/
 
-Demo: [link](https://iamcsharper.github.io/dist/)
-
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
